@@ -4,6 +4,7 @@ from textual.containers import VerticalScroll
 from textual.widgets import Footer, Header
 from data import Tasks, Paths
 from logger import Logger
+from task import Task
 
 
 class Todo(App[object]):
@@ -28,7 +29,8 @@ class Todo(App[object]):
     def compose(self) -> ComposeResult:
         yield Header()
         with VerticalScroll():
-            pass
+            for task_data in self.tasks.read()["tasks"]:
+                yield Task(goal=task_data["title"], completed=task_data["completed"])
         yield Footer()
 
     def on_mount(self) -> None:
