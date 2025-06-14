@@ -5,7 +5,7 @@ from textual.widgets import Checkbox
 class Task(Checkbox):
     def __init__(self, goal: str = "", completed: bool = False) -> None:
         self.label: str = goal
-        self.value: bool = completed
+        self.value = completed
 
     def updateTask(self, goal: Optional[str] = "", completed: Optional[bool] = None) -> None:
         if goal:
