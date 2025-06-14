@@ -2,6 +2,7 @@ from typing import Optional
 from platformdirs import user_config_path, user_data_path
 from pathlib import Path
 from logger import Logger
+from json import dump
 
 APP_NAME = "todo-app"
 APP_AUTHOR = "kaeeraa"
@@ -15,16 +16,27 @@ class Paths(object):
     TASKS: Path = Path(APP_DATA / "tasks.json")
 
 
-class Data(object):
+class Tasks(object):
     def __init__(self) -> None:
         self._logger = Logger("Data")
+        self._file = Paths.TASKS
 
-    def generatePath(self, path: Path) -> Optional[str]:
-        if path.exists():
+        # Hardcoded default
+        self.default: dict[str, list[dict[str, str | bool]]] = {
+            "tasks": [
+                {"title": "Test Task1", "completed": False},
+                {"title": "Completed task", "completed": True},
+            ]
+        }
+
+        self._verify()
+
+    def _verify(self) -> Optional[str]:
+        if self._file.exists():
             return
+        self._file.parent.mkdir(parents=True, exist_ok=True)
 
-        self._logger.warning(f"File {path.name} doesn't exists! Creating...")
-        path.parent.mkdir(parents=True, exist_ok=True)
-        path.touch()
+        with self._file.open(mode="w") as file:
+            dump(self.default, file, indent=2)
 
-        return str(path)
+        return str(self._file)
