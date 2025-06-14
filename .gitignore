@@ -1,2 +1,3 @@
 .direnv
 *.log
+__pycache__
