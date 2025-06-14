@@ -1,7 +1,8 @@
 from typing import Optional
 from textual.app import App, ComposeResult
+from textual.containers import VerticalScroll
 from textual.widgets import Footer, Header
-from data import Data, Paths
+from data import Tasks, Paths
 from logger import Logger
 
 
@@ -11,7 +12,7 @@ class Todo(App[object]):
         """Return CSS path if file exists, otherwise None."""
         file: Optional[str]
 
-        if not (file := self.data.generatePath(Paths.TCSS)):
+        if not (file := Paths.TCSS.touch()):
             self.logger.warning(f"CSS file not found at: {Paths.TCSS}")
 
         return file
@@ -20,16 +21,14 @@ class Todo(App[object]):
         Logger.setDefaultWidget(self)
 
         self.logger = Logger("App")
-        self.data = Data()
+        self.tasks = Tasks()
 
         super().__init__()
 
-        # Check for tasks.json
-        self.data.generatePath(Paths.TASKS)
-
     def compose(self) -> ComposeResult:
         yield Header()
-
+        with VerticalScroll():
+            pass
         yield Footer()
 
     def on_mount(self) -> None:
