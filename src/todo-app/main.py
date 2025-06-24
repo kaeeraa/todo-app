@@ -8,6 +8,11 @@ from task import Task
 
 
 class Todo(App[object]):
+    # BINDINGS = [
+    #     ("a", "new_task", "Create new task")
+    #     ("r", "remove_task", "Remove selected task")
+    # ]
+
     @property
     def CSS_PATH(self) -> str | None:  # type: ignore | its designed to override it
         """Return CSS path if file exists, otherwise None."""
@@ -26,11 +31,16 @@ class Todo(App[object]):
 
         super().__init__()
 
+        self.taskList: list[Task] = list()
+
+        for data in self.tasks.read()["tasks"]:
+            self.taskList.append(Task(goal=data["title"], completed=data["completed"]))
+
     def compose(self) -> ComposeResult:
         yield Header()
         with VerticalScroll():
-            for task_data in self.tasks.read()["tasks"]:
-                yield Task(goal=task_data["title"], completed=task_data["completed"])
+            for task in self.taskList:
+                yield task
         yield Footer()
 
     def on_mount(self) -> None:
