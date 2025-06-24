@@ -27,7 +27,7 @@ class Logger:
 
         Logger._instances.add(self)
 
-    def __del__(self):
+    def close(self) -> None:
         Logger._instances.discard(self)
 
     @classmethod
