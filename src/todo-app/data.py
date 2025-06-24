@@ -32,7 +32,7 @@ class Tasks:
         self._data: TasksDict
 
         # Hardcoded default
-        self.default: TasksDict = {
+        self._defaultTemplate: TasksDict = {
             "tasks": [
                 {"title": "Test Task1", "completed": False},
                 {"title": "Completed task", "completed": True},
@@ -47,7 +47,7 @@ class Tasks:
         self._file.parent.mkdir(parents=True, exist_ok=True)
 
         with self._file.open(mode="w") as file:
-            dump(self.default, file, indent=2)
+            dump(self._defaultTemplate, file, indent=2)
 
         return str(self._file)
 
@@ -55,7 +55,7 @@ class Tasks:
         """Read tasks from file and return as list of Task widgets"""
         self._verify()
 
-        data: TasksDict = self.default
+        data: TasksDict = self._defaultTemplate
 
         try:
             data = loads(self._file.read_text())
