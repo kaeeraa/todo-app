@@ -1,13 +1,14 @@
-from typing import ClassVar, Optional, Set, TypeAlias, Union
+from typing import ClassVar, Optional, TypeAlias, Union
 from textual.app import App
 from textual.widget import Widget
 from textual.notifications import SeverityLevel
+from weakref import WeakSet
 
 WidgetType: TypeAlias = Union[Widget, App[object]]
 
 
 class Logger:
-    _instances: ClassVar[Set["Logger"]] = set()
+    _instances: ClassVar[WeakSet["Logger"]] = WeakSet()
     _default_widget: ClassVar[Optional[WidgetType]] = None
 
     def __init__(self, name: str, widget: Optional[WidgetType] = None) -> None:
