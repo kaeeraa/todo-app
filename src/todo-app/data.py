@@ -79,12 +79,13 @@ class Tasks:
 
         return self.save()
 
-    def remove(self, id: int) -> None:
-        if 0 > id > len(self._data):
+    def remove(self, index: int) -> None:
+        if not (0 <= index < len(self._data["tasks"])):
             self._logger.error(
-                f"ID {id} out of range! (total entries {len(self._data)})"
+                f"Index {index} out of range (0..{len(self._data['tasks'])-1})"
             )
+            return
 
-        self._data["tasks"].pop(id)
+        self._data["tasks"].pop(index)
 
         return self.save()
