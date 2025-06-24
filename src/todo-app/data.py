@@ -1,8 +1,9 @@
+from copy import deepcopy
 from typing import Optional, TypedDict
 from platformdirs import user_config_path, user_data_path
 from pathlib import Path
 from logger import Logger
-from json import JSONDecodeError, dump, loads
+from json import JSONDecodeError, dump, load, loads
 
 APP_NAME: str = "todo-app"
 APP_AUTHOR: str = "kaeeraa"
@@ -55,16 +56,15 @@ class Tasks:
         """Read tasks from file and return as list of Task widgets"""
         self._verifyFile()
 
-        data: TasksDict = self._defaultTemplate
-
         try:
-            data = loads(self._file.read_text())
-        except JSONDecodeError:
-            self._logger.error("Data file is malformed! Using default tasks.")
-        finally:
+            with self._file.open("r") as f:
+                data: TasksDict = load(f)
             self._data = data
+        except (OSError, JSONDecodeError, KeyError, ValueError):
+            self._logger.error("Data file is malformed! Using default tasks.")
+            self._data = deepcopy(self._defaultTemplate)
 
-        return self._data
+        return self._data.copy()
 
     def save(self) -> None:
         """Save list of Task widgets to file"""
