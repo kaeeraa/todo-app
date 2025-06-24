@@ -39,9 +39,9 @@ class Tasks:
             ]
         }
 
-        self._verify()
+        self._verifyFile()
 
-    def _verify(self) -> Optional[str]:
+    def _verifyFile(self) -> Optional[str]:
         if self._file.exists():
             return None
         self._file.parent.mkdir(parents=True, exist_ok=True)
@@ -53,7 +53,7 @@ class Tasks:
 
     def read(self) -> TasksDict:
         """Read tasks from file and return as list of Task widgets"""
-        self._verify()
+        self._verifyFile()
 
         data: TasksDict = self._defaultTemplate
 
