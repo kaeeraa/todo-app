@@ -68,8 +68,11 @@ class Tasks:
 
     def save(self) -> None:
         """Save list of Task widgets to file"""
-        with self._file.open(mode="w") as file:
-            dump(self._data, file, indent=2)
+        try:
+            with self._file.open("w") as f:
+                dump(self._data, f, indent=2)
+        except OSError as e:
+            self._logger.error(f"Error saving tasks: {e}")
 
     def add(self, task: TaskDict) -> None:
         self._data["tasks"].append(task)
