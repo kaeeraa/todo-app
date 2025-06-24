@@ -5,6 +5,7 @@ from textual.notifications import SeverityLevel
 from weakref import WeakSet
 
 WidgetType: TypeAlias = Union[Widget, App[object]]
+_ALLOWED_SEVERITIES = {"information", "warning", "error"}
 
 
 class Logger:
@@ -40,6 +41,12 @@ class Logger:
         severity: SeverityLevel = "information",
         timeout: float = 5.0,
     ) -> None:
+        if severity not in _ALLOWED_SEVERITIES:
+            raise ValueError(
+                f"Invalid severity: {severity!r}. "
+                f"Allowed values: {_ALLOWED_SEVERITIES}"
+            )
+
         self.widget.notify(
             message=message,
             title=self.name,
