@@ -9,12 +9,19 @@ _ALLOWED_SEVERITIES = {"information", "warning", "error"}
 
 
 class Logger:
+    """
+    Logger for Textual widgets and apps.
+
+    Provides info, warning, and error notifications via the configured widget.
+    Allowed severity levels: "information", "warning", "error".
+    """
+
     _instances: ClassVar[WeakSet["Logger"]] = WeakSet()
     _default_widget: ClassVar[Optional[WidgetType]] = None
 
     def __init__(self, name: str, widget: Optional[WidgetType] = None) -> None:
         self.name: str = name
-        self.widget: Widget | App[object]
+        self.widget: WidgetType
 
         if widget is not None:
             self.widget = widget
@@ -29,10 +36,12 @@ class Logger:
         Logger._instances.add(self)
 
     def close(self) -> None:
+        """Unregister this logger from the global instances set."""
         Logger._instances.discard(self)
 
     @classmethod
     def setDefaultWidget(cls, widget: WidgetType) -> None:
+        """Set the default widget to be used by loggers when none is provided."""
         cls._default_widget = widget
 
     def _log(
