@@ -21,8 +21,8 @@ class Paths:
     APP_CONFIG: Path = user_config_path(APP_NAME, APP_AUTHOR)
     APP_DATA: Path = user_data_path(APP_NAME, APP_AUTHOR)
 
-    TCSS: Path = Path(APP_CONFIG / "style.tcss")
-    TASKS: Path = Path(APP_DATA / "tasks.json")
+    TCSS: Path = APP_CONFIG / "style.tcss"
+    TASKS: Path = APP_DATA / "tasks.json"
 
 
 class Tasks:
