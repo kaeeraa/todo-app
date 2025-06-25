@@ -28,9 +28,6 @@ class Todo(App[object]):
         self.tasks = Tasks()
         self.taskList: list[Task] = list()
 
-        for data in self.tasks.read()["tasks"]:
-            self.taskList.append(Task(goal=data["title"], completed=data["completed"]))
-
     def compose(self) -> ComposeResult:
         yield Header()
         with VerticalScroll():
@@ -40,7 +37,8 @@ class Todo(App[object]):
 
     def on_mount(self) -> None:
         """On app launch"""
-        pass
+        for data in self.tasks.read()["tasks"]:
+            self.taskList.append(Task(goal=data["title"], completed=data["completed"]))
 
 
 def run() -> None:
