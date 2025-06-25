@@ -46,7 +46,7 @@ class Todo(App[object]):
 
         inputWidget = Input(placeholder="Enter new task title...")
         self._new_task_input = inputWidget
-        await self.mount(inputWidget)
+        await self.body.mount(inputWidget)
         self.set_focus(inputWidget)
 
     async def on_input_submitted(self, event: Input.Submitted) -> None:
