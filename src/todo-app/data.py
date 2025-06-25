@@ -1,9 +1,9 @@
 from copy import deepcopy
-from typing import Optional, TypedDict
+from typing import TypedDict
 from platformdirs import user_config_path, user_data_path
 from pathlib import Path
 from logger import Logger
-from json import JSONDecodeError, dump, load, loads
+from json import JSONDecodeError, dump, load
 
 APP_NAME: str = "todo-app"
 APP_AUTHOR: str = "kaeeraa"
@@ -19,20 +19,17 @@ class TasksDict(TypedDict):
 
 
 class Paths:
-    APP_CONFIG: Path = user_config_path(APP_NAME, APP_AUTHOR)
-    APP_DATA: Path = user_data_path(APP_NAME, APP_AUTHOR)
+    CONFIG: Path = user_config_path(APP_NAME, APP_AUTHOR)
+    DATA: Path = user_data_path(APP_NAME, APP_AUTHOR)
 
-    TCSS: Path = APP_CONFIG / "style.tcss"
-    TASKS: Path = APP_DATA / "tasks.json"
+    STYLE: Path = CONFIG / "style.tcss"
+    TASKS: Path = DATA / "tasks.json"
 
 
 class Tasks:
     def __init__(self) -> None:
         self._logger: Logger = Logger("Data")
         self._file: Path = Paths.TASKS
-        self._data: TasksDict
-
-        # Hardcoded default
         self._defaultTemplate: TasksDict = {
             "tasks": [
                 {"title": "Test Task1", "completed": False},
@@ -40,17 +37,17 @@ class Tasks:
             ]
         }
 
+        self._data: TasksDict = deepcopy(self._defaultTemplate)
+
         self._verifyFile()
 
-    def _verifyFile(self) -> Optional[str]:
+    def _verifyFile(self) -> None:
         if self._file.exists():
             return None
         self._file.parent.mkdir(parents=True, exist_ok=True)
 
         with self._file.open(mode="w") as file:
             dump(self._defaultTemplate, file, indent=2)
-
-        return str(self._file)
 
     def read(self) -> TasksDict:
         """Read tasks from file and return as list of Task widgets"""
