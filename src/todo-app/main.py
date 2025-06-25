@@ -8,10 +8,10 @@ from task import Task
 
 
 class Todo(App[object]):
-    # BINDINGS = [
-    #     ("a", "new_task", "Create new task")
-    #     ("r", "remove_task", "Remove selected task")
-    # ]
+    BINDINGS = [
+        ("a", "new_task", "Create new task"),
+        ("r", "remove_task", "Remove selected task"),
+    ]
 
     @property
     def CSS_PATH(self) -> str | None:  # type: ignore | its designed to override it
@@ -25,20 +25,18 @@ class Todo(App[object]):
         super().__init__()
         Logger.setDefaultWidget(self)
         self.logger = Logger("App")
-        self.tasks = Tasks()
-        self.taskList: list[Task] = list()
+        self.tasksController = Tasks()
 
     def compose(self) -> ComposeResult:
         yield Header()
-        with VerticalScroll():
-            for task in self.taskList:
-                yield task
+        self.body = VerticalScroll()
+        yield self.body
         yield Footer()
 
-    def on_mount(self) -> None:
+    async def on_mount(self) -> None:
         """On app launch"""
-        for data in self.tasks.read()["tasks"]:
-            self.taskList.append(Task(goal=data["title"], completed=data["completed"]))
+        for task in self.tasksController.read():
+            await self.body.mount(task)
 
 
 def run() -> None:
