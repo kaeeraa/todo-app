@@ -16,21 +16,16 @@ class Todo(App[object]):
     @property
     def CSS_PATH(self) -> str | None:  # type: ignore | its designed to override it
         """Return CSS path if file exists, otherwise None."""
-        file: Optional[str]
-
-        if not (file := Paths.TCSS.touch()):
-            self.logger.warning(f"CSS file not found at: {Paths.TCSS}")
-
-        return file
+        if not Paths.STYLE.exists():
+            self.logger.warning(f"CSS file not found at: {Paths.STYLE}")
+            return None
+        return str(Paths.STYLE)
 
     def __init__(self) -> None:
+        super().__init__()
         Logger.setDefaultWidget(self)
-
         self.logger = Logger("App")
         self.tasks = Tasks()
-
-        super().__init__()
-
         self.taskList: list[Task] = list()
 
         for data in self.tasks.read()["tasks"]:
