@@ -1,9 +1,10 @@
 from copy import deepcopy
-from typing import TypedDict
+from typing import Any, TypedDict
 from platformdirs import user_config_path, user_data_path
 from pathlib import Path
 from logger import Logger
 from json import JSONDecodeError, dump, load
+from task import Task
 
 APP_NAME: str = "todo-app"
 APP_AUTHOR: str = "kaeeraa"
@@ -49,19 +50,36 @@ class Tasks:
         with self._file.open(mode="w") as file:
             dump(self._defaultTemplate, file, indent=2)
 
-    def read(self) -> TasksDict:
-        """Read tasks from file and return as list of Task widgets"""
+    def read(self) -> list[Task]:
+        """Read tasks from file and return as list of Task objects"""
         self._verifyFile()
 
         try:
             with self._file.open("r") as f:
                 data: TasksDict = load(f)
-            self._data = data
+            tasksData: list[TaskDict] = data["tasks"]
         except (OSError, JSONDecodeError, KeyError, ValueError):
             self._logger.error("Data file is malformed! Using default tasks.")
-            self._data = deepcopy(self._defaultTemplate)
+            tasksData: list[TaskDict] = deepcopy(self._defaultTemplate).get("tasks")
 
-        return self._data.copy()
+        widgets: list[Task] = []
+        valid: list[TaskDict] = []
+        for entry in tasksData:
+            title: Any = entry.get("title")
+            completed: Any = entry.get("completed")
+
+            if not isinstance(title, str):
+                self._logger.error(f"Ignoring entry with bad title: {entry!r}")
+                continue
+            if not isinstance(completed, bool):
+                self._logger.error(f"Ignoring entry with bad completed flag: {entry!r}")
+                continue
+
+            widgets.append(Task(goal=title, completed=completed))
+            valid.append({"title": title, "completed": completed})
+
+        self._data = {"tasks": valid}
+        return widgets
 
     def save(self) -> None:
         """Save list of Task widgets to file"""
@@ -84,5 +102,4 @@ class Tasks:
             return
 
         self._data["tasks"].pop(index)
-
-        return self.save()
+self.save()
