@@ -91,8 +91,7 @@ class Tasks:
 
     def add(self, task: TaskDict) -> None:
         self._data["tasks"].append(task)
-
-        return self.save()
+        self.save()
 
     def remove(self, index: int) -> None:
         if not (0 <= index < len(self._data["tasks"])):
@@ -102,4 +101,4 @@ class Tasks:
             return
 
         self._data["tasks"].pop(index)
-self.save()
+        self.save()
